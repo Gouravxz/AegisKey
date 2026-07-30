@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisKey | Account Recovery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #0B0F17;
+            --bg-surface: #161F30;
+            --border-color: #23314D;
+            --accent-primary: #0071E3;
+            --accent-hover: #005BB5;
+            --accent-cyan: #00F2FE;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --color-error: #EF4444;
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .recovery-card {
+            width: 100%;
+            max-width: 440px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Top Progress Bar for Overall 10-Min Session Expiry */
+        .session-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: var(--accent-cyan);
+            width: 100%;
+        }
+
+        .session-timer-tag {
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .brand-logo {
+            height: 38px;
+            margin-bottom: 12px;
+        }
+
+        .brand-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .brand-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Step Animation Wrapper */
+        .step-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .step-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+        }
+
+        /* OTP 6-Digit Numeric Box Styling */
+        .otp-box-group {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 52px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.2);
+        }
+
+        .timer-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .btn-action:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .btn-text:disabled {
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .alert-box {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .alert-error { background-color: rgba(239, 68, 68, 0.15); border: 1px solid var(--color-error); color: var(--color-error); }
+        .alert-success { background-color: rgba(16, 185, 129, 0.15); border: 1px solid var(--color-success); color: var(--color-success); }
+        .alert-warning { background-color: rgba(245, 158, 11, 0.15); border: 1px solid var(--color-warning); color: var(--color-warning); }
+
+        .notice-info {
+            background-color: rgba(0, 113, 227, 0.08);
+            border-left: 3px solid var(--accent-primary);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        .footer-link a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Success Animated Popup Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(11, 15, 23, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--color-success);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            animation: popIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            color: var(--color-success);
+            margin-bottom: 15px;
+        }
+
+        .modal-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .modal-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .redirect-badge {
+            font-size: 0.8rem;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: var(--accent-cyan);
+            display: inline-block;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="recovery-card">
+        <!-- Top Expiry Indicator -->
+        <div class="session-progress-bar" id="sessionProgressBar"></div>
+
+        <div class="session-timer-tag">
+            Session Closes in: <span id="pageTimerText" style="color: var(--accent-cyan); font-weight: 700;">10:00</span>
+        </div>
+
+        <div class="brand-header">
+            <img src="original-image.svg" alt="AegisKey" class="brand-logo">
+            <h2>Account Recovery</h2>
+            <p>Reset your AegisKey account login credentials</p>
+        </div>
+
+        <!-- ALERT NOTIFICATION -->
+        <div id="alertBox" class="alert-box"></div>
+
+        <!-- STEP 1: ENTER EMAIL -->
+        <div id="step1" class="step-container active">
+            <form onsubmit="handleSendOTP(event)">
+                <div class="input-group">
+                    <label for="recoveryEmail">Registered Email Address</label>
+                    <input type="email" id="recoveryEmail" class="input-field" placeholder="name@company.com" required>
+                </div>
+                <button type="submit" id="sendOtpBtn" class="btn-action">
+                    <i class="fa-solid fa-paper-plane"></i> Send Verification OTP
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP 2: VERIFY OTP -->
+        <div id="step2" class="step-container">
+            <form onsubmit="handleVerifyOTP(event)">
+                <div class="timer-badge">
+                    <span>Code valid for 5 Mins</span>
+                    <span><i class="fa-solid fa-clock"></i> Resend in: <strong id="otpTimer" style="color: var(--accent-cyan);">01:00</strong></span>
+                </div>
+
+                <div class="otp-box-group">
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)" onkeydown="handleBackspace(event, 0)" required>
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)" onkeydown="handleBackspace(event, 1)" required>
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)" onkeydown="handleBackspace(event, 2)" required>
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)" onkeydown="handleBackspace(event, 3)" required>
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)" onkeydown="handleBackspace(event, 4)" required>
+                    <input type="number" inputmode="numeric" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)" onkeydown="handleBackspace(event, 5)" required>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span style="font-size: 0.78rem; color: var(--text-muted);" id="attemptText">Attempts: 1/3</span>
+                    <button type="button" id="resendBtn" class="btn-text" onclick="handleResendOTP()" disabled>Resend Code</button>
+                </div>
+
+                <button type="submit" id="verifyOtpBtn" class="btn-action">
+                    <i class="fa-solid fa-shield-check"></i> Verify & Continue
+                </button>
+            </form>
+        </div>
+
+        <!-- STEP 3: RESET PASSWORD -->
+        <div id="step3" class="step-container">
+            <form onsubmit="handleResetPassword(event)">
+                <div class="input-group">
+                    <label for="newPassword">New Master Login Password</label>
+                    <input type="password" id="newPassword" class="input-field" placeholder="Enter new password" required minlength="6">
+                </div>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm new password" required minlength="6">
+                </div>
+                <button type="submit" id="resetPassBtn" class="btn-action">
+                    <i class="fa-solid fa-key"></i> Update Password
+                </button>
+            </form>
+        </div>
+
+        <!-- WARNING FOOTER NOTE -->
+        <div class="notice-info">
+            <i class="fa-solid fa-triangle-exclamation" style="color: var(--color-warning);"></i>
+            <strong>Important:</strong> Resetting your login password restores access to your account, but cannot recover lost Vault Encryption Passwords.
+        </div>
+
+        <div class="footer-link">
+            <a href="login.html"><i class="fa-solid fa-arrow-left"></i> Back to Login</a>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL POPUP -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-card">
+            <i class="fa-solid fa-circle-check modal-icon"></i>
+            <h3>Password Updated!</h3>
+            <p>You have successfully changed your AegisKey account login password.</p>
+            <div class="redirect-badge">
+                Redirecting to Login in <strong id="redirectTimer">5</strong>s...
+            </div>
+        </div>
+    </div>
+
+    <!-- RECOVERY ENGINE SCRIPT -->
+    <script>
+        let resendCountdown = 60; // 1 Min Resend Delay
+        let pageCountdown = 10 * 60; // 10 Min Overall Page Limit
+        let resendTimerInterval = null;
+        let pageTimerInterval = null;
+        let userEmailCache = "";
+        let verifiedOtpCache = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            startOverallPageTimer();
+        });
+
+        // 10-Minute Page Expiry Control
+        function startOverallPageTimer() {
+            const progressBar = document.getElementById('sessionProgressBar');
+            const pageTimerText = document.getElementById('pageTimerText');
+
+            clearInterval(pageTimerInterval);
+            pageTimerInterval = setInterval(() => {
+                pageCountdown--;
+
+                let mins = Math.floor(pageCountdown / 60);
+                let secs = pageCountdown % 60;
+                pageTimerText.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                let percent = (pageCountdown / 600) * 100;
+                progressBar.style.width = percent + "%";
+
+                if (pageCountdown <= 0) {
+                    clearInterval(pageTimerInterval);
+                    showAlert("Recovery Session Expired (10 Min Limit). Redirecting to Login...", "error");
+                    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                }
+            }, 1000);
+        }
+
+        // Send OTP Action (Step 1)
+        async function handleSendOTP(e) {
+            e.preventDefault();
+            const email = document.getElementById('recoveryEmail').value.trim();
+            const btn = document.getElementById('sendOtpBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Checking Account...`;
+
+            try {
+                const response = await fetch('/api/user/forgot-password-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    userEmailCache = email;
+                    showStep('step2');
+                    startResendTimer();
+                    showAlert("6-Digit OTP sent to your registered email! Valid for 5 minutes.", "success");
+                } else {
+                    if (response.status === 404) {
+                        showAlert("You are not registered on AegisKey!", "error");
+                    } else {
+                        showAlert(result.error || "Failed to send OTP", "error");
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification OTP`;
+                }
+            } catch (err) {
+                showAlert("Server connection error. Please try again.", "error");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Verification OTP`;
+            }
+        }
+
+        // 1-Minute Resend Delay Countdown
+        function startResendTimer() {
+            resendCountdown = 60;
+            const timerEl = document.getElementById('otpTimer');
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.disabled = true;
+
+            clearInterval(resendTimerInterval);
+            resendTimerInterval = setInterval(() => {
+                resendCountdown--;
+                timerEl.innerText = `00:${resendCountdown < 10 ? '0' : ''}${resendCountdown}`;
+
+                if (resendCountdown <= 0) {
+                    clearInterval(resendTimerInterval);
+                    timerEl.innerText = "00:00";
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // Resend OTP Action
+        async function handleResendOTP() {
+            if (!userEmailCache) return;
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/user/forgot-password-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmailCache })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    startResendTimer();
+                    showAlert("New 6-digit OTP re-sent to your email!", "success");
+                } else {
+                    showAlert(result.error || "Failed to resend OTP", "warning");
+                    resendBtn.disabled = false;
+                }
+            } catch (err) {
+                showAlert("Network error trying to resend OTP.", "error");
+                resendBtn.disabled = false;
+            }
+        }
+
+        // OTP Input Auto-Tab Move (Numeric inputs)
+        function moveToNext(elem, index) {
+            if (elem.value.length >= 1) {
+                elem.value = elem.value.slice(-1); // Keep single digit
+                if (index < 6) {
+                    document.querySelectorAll('.otp-input')[index].focus();
+                }
+            }
+        }
+
+        function handleBackspace(e, index) {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                document.querySelectorAll('.otp-input')[index - 1].focus();
+            }
+        }
+
+        // Verify OTP (Step 2)
+        function handleVerifyOTP(e) {
+            e.preventDefault();
+            const inputs = document.querySelectorAll('.otp-input');
+            let code = "";
+            inputs.forEach(input => code += input.value);
+
+            if (code.length < 6) {
+                showAlert("Please enter the complete 6-digit OTP code!", "warning");
+                return;
+            }
+
+            verifiedOtpCache = code;
+            showAlert("OTP Code Verified!", "success");
+            setTimeout(() => {
+                showStep('step3');
+            }, 600);
+        }
+
+        // Reset Password Final Action (Step 3)
+        async function handleResetPassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                showAlert("Passwords do not match!", "error");
+                return;
+            }
+
+            const btn = document.getElementById('resetPassBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Updating Password...`;
+
+            try {
+                const response = await fetch('/api/user/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmailCache,
+                        otp: verifiedOtpCache,
+                        newPassword: newPass
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    triggerSuccessPopup();
+                } else {
+                    showAlert(result.error || "Failed to update password.", "error");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-key"></i> Update Password`;
+                }
+            } catch (err) {
+                showAlert("Server error during password update.", "error");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-key"></i> Update Password`;
+            }
+        }
+
+        // Success Popup & 5-Second Redirect Timer
+        function triggerSuccessPopup() {
+            const modal = document.getElementById('successModal');
+            const timerEl = document.getElementById('redirectTimer');
+            modal.style.display = 'flex';
+
+            let secondsLeft = 5;
+            const redirectInterval = setInterval(() => {
+                secondsLeft--;
+                timerEl.innerText = secondsLeft;
+
+                if (secondsLeft <= 0) {
+                    clearInterval(redirectInterval);
+                    window.location.href = 'login.html';
+                }
+            }, 1000);
+        }
+
+        // Step Switcher Helper
+        function showStep(stepId) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+            hideAlert();
+        }
+
+        // Alert Helpers
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.innerText = msg;
+            box.className = `alert-box alert-${type}`;
+            box.style.display = 'block';
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
