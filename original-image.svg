@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="100%" height="100%" style="background: transparent;">
+  <defs>
+    <!-- Background Gradient for Shield -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="100%" stop-color="#0071E3" />
+    </linearGradient>
+    
+    <!-- Glow Effect -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Group: Logo Symbol (Shield + Keyhole) -->
+  <g transform="translate(10, 10)">
+    <!-- Outer Aegis Shield -->
+    <path d="M 50 10 L 85 25 C 85 65 65 85 50 95 C 35 85 15 65 15 25 Z" 
+          fill="none" 
+          stroke="url(#shieldGrad)" 
+          stroke-width="4" 
+          filter="url(#neonGlow)" />
+
+    <!-- Inner Shield Accent Line -->
+    <path d="M 50 18 L 78 30 C 78 60 62 77 50 85 C 38 77 22 60 22 30 Z" 
+          fill="rgba(0, 113, 227, 0.15)" 
+          stroke="#0071E3" 
+          stroke-width="1.5" />
+
+    <!-- Center Keyhole Symbol -->
+    <circle cx="50" cy="42" r="7" fill="#F8FAFC" />
+    <polygon points="46,45 54,45 56,62 44,62" fill="#F8FAFC" />
+
+    <!-- Steganography Audio Waves Inside Shield -->
+    <line x1="32" y1="45" x2="32" y2="55" stroke="#00F2FE" stroke-width="2" stroke-linecap="round" />
+    <line x1="68" y1="45" x2="68" y2="55" stroke="#00F2FE" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Group: Typography (Brand Text) -->
+  <g transform="translate(115, 68)">
+    <!-- Aegis Text -->
+    <text x="0" y="0" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-weight="800" 
+          font-size="38" 
+          fill="#F8FAFC" 
+          letter-spacing="1">AEGIS</text>
+    
+    <!-- Key Text -->
+    <text x="122" y="0" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-weight="400" 
+          font-size="38" 
+          fill="#00F2FE" 
+          letter-spacing="1">KEY</text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="2" y="20" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-weight="600" 
+          font-size="11" 
+          fill="#94A3B8" 
+          letter-spacing="3.5">ENTERPRISE SECURITY SUITE</text>
+  </g>
+</svg>
