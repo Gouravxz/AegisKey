@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal & Privacy Policies | AegisKey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #0B0F17;
+            --bg-surface: #161F30;
+            --border-color: #23314D;
+            --accent-primary: #0071E3;
+            --accent-cyan: #00F2FE;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            height: 36px;
+        }
+
+        .back-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        .nav-sections {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .nav-sections a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-sections a:hover {
+            color: var(--accent-cyan);
+        }
+
+        section {
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p, ul {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .warning-box {
+            background-color: rgba(0, 113, 227, 0.1);
+            border-left: 4px solid var(--accent-primary);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <img src="original-image.svg" alt="AegisKey Logo" class="brand-logo">
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Vault</a>
+        </header>
+
+        <h1>Terms of Service & Privacy Policy</h1>
+        <p class="last-updated">Effective Date: July 2026</p>
+
+        <nav class="nav-sections">
+            <a href="#terms">Terms of Service</a>
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#acceptable">Acceptable Use</a>
+        </nav>
+
+        <!-- SECTION 1: TERMS OF SERVICE -->
+        <section id="terms">
+            <h2><i class="fa-solid fa-file-contract"></i> 1. Terms of Service</h2>
+            <p>Welcome to <strong>AegisKey</strong>. By accessing or using our file encryption and audio vault services, you agree to comply with these terms.</p>
+            
+            <p>AegisKey provides client-side and server-assisted steganographic file encryption, allowing users to pack images and files into encrypted audio files.</p>
+
+            <div class="warning-box">
+                <strong><i class="fa-solid fa-key"></i> Password Responsibility Notice:</strong><br>
+                AegisKey does not store or backup your master encryption passwords. If you lose or forget your password, your encrypted data cannot be recovered by us under any circumstances.
+            </div>
+
+            <p><strong>Limitation of Liability:</strong> AegisKey shall not be held liable for any loss of data, corrupted files, or unauthorized access resulting from user error, forgotten passwords, or compromised local user devices.</p>
+        </section>
+
+        <!-- SECTION 2: PRIVACY POLICY -->
+        <section id="privacy">
+            <h2><i class="fa-solid fa-user-shield"></i> 2. Privacy Policy</h2>
+            <p>Your privacy is fundamental to our architecture. Here is how we handle your data:</p>
+            <ul>
+                <li><strong>Encryption Data:</strong> Files uploaded for encryption are processed securely. Your original unencrypted files are never permanently stored on our servers.</li>
+                <li><strong>Account Credentials:</strong> Passwords are hashed using standard SHA-256 algorithms before storage. We never see or save plain-text passwords.</li>
+                <li><strong>Activity Logs:</strong> To ensure system security, we record basic audit events (such as login times, IP addresses, and encryption activities) in your private account history log.</li>
+                <li><strong>Third-Party Sharing:</strong> We do not sell, rent, or trade your personal information or metadata to third parties.</li>
+            </ul>
+        </section>
+
+        <!-- SECTION 3: ACCEPTABLE USE POLICY -->
+        <section id="acceptable">
+            <h2><i class="fa-solid fa-scale-balanced"></i> 3. Acceptable Use Policy</h2>
+            <p>You agree to use AegisKey only for lawful purposes. You strictly agree NOT to use this platform to:</p>
+            <ul>
+                <li>Store, hide, or transmit illicit, harmful, or illegal material.</li>
+                <li>Distribute copyrighted files or media that you do not have permission or ownership to handle.</li>
+                <li>Attempt to bypass system rate limits or perform denial-of-service (DoS) attacks on the AegisKey infrastructure.</li>
+            </ul>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2026 AegisKey Security Suite. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
+
